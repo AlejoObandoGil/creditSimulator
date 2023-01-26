@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación de crédito</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1 class="text-center mt-5">Simulador de crédito Tasa fija</h1>
+    <div class="row" style="height: 500px">
+        <form class="col-lg-3 col-sm-12">
+            <br>
+            <label class="mx-5 mb-2 bold">Monto del préstamo: <input type="text" class="form-control" id="loanAmount" oninput="this.value = formatNumberInput(this.value)"></label>
+            <label class="mx-5 mb-2 bold">Tasa de interés mensual: <input type="text" class="form-control" id="interestRate"></label>
+            <label class="mx-5 mb-2 bold">Número de meses: <input type="text" class="form-control" id="numMonths"></label>
+            <label class="mx-5 mb-2 bold">Agregar monto a capital (Opcional): <input type="text" class="form-control" id="addCapital" oninput="this.value = formatNumberInput(this.value)"></label><br><br>
+            <input type="button" class="btn btn-success mx-5" value="Calcular" onclick="calculate()">
+            <button class="btn btn-danger" onclick="deleteRow()">Limpiar tabla</button>
+        </form>
+        <div class="col-lg-8 col-sm-12 mt-4 justify-content-center">
+            <table id="table" class="table table-success table-striped">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Interés Mensual</th>
+                        <th>Monto a Interés</th>
+                        <th>Monto a Capital</th>
+                        <th>Saldo Final</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script>
+    var table = document.getElementById('table');
+    var row = document.getElementsByTagName('tbody')[0];
+
+    function deleteRow (row) {
+        row.parentNode.removeChild(row);
+    };
+
+    function removeFormatNumberInput(num = null) {
+        return num.replace(/\./g,'');
+    }
+
+
+    function amortizationTable(loanAmount, interestRate, numMonths, addCapital = '') {
+        loanAmount = removeFormatNumberInput(loanAmount)
+        addCapital = removeFormatNumberInput(addCapital)
+        // Calcular el pago mensual
+        var monthlyPayment = loanAmount * interestRate / (1 - Math.pow(1 + interestRate, -numMonths));
+    
+        // Crear una tabla vacía para almacenar los resultados
+        var table = [];
+
+        // Loop a través de cada mes
+        for (var i = 1; i <= numMonths; i++) {
+            // Calcular el interés mensual
+            var monthlyInterest = (loanAmount * interestRate);
+            console.log(addCapital)
+            // Calcular el principal mensual
+            var monthlyPrincipal = (monthlyPayment + (addCapital !== '' ? parseInt(addCapital) : 0)) - monthlyInterest;
+            // Restar el principal mensual del saldo restante del préstamo
+            loanAmount -= monthlyPrincipal;
+    
+            // Agregar los resultados al final de la tabla
+            table.push({
+                Month: i,
+                Payment: monthlyPayment.toFixed(0),
+                Interest: monthlyInterest.toFixed(0),
+                Principal: monthlyPrincipal.toFixed(0),
+                Balance: loanAmount.toFixed(0)
+            });
+        }
+    
+        // Devolver la tabla
+        return table;
+    }
+
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function formatNumberInput(num) {
+        num = num.toString().replace(/[^0-9]/g,'');
+        var parts = num.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return parts.join(".");
+    }
+
+    function calculate() {
+        var tableElem = document.getElementById('table');
+        var row = document.getElementsByTagName('tbody')[0];
+        // row.parentNode.removeChild(row);
+
+        var loanAmount = document.getElementById("loanAmount").value;
+        var interestRate = document.getElementById("interestRate").value / 100;
+        var numMonths = document.getElementById("numMonths").value;
+        var addCapital = document.getElementById("addCapital").value;
+        var table = amortizationTable(loanAmount, interestRate, numMonths, addCapital);
+    
+        var headerExists = false;
+        for (var i = 0; i < table.length; i++) {
+            var row = tableElem.insertRow();
+            var monthCell = row.insertCell(0);
+            var paymentCell = row.insertCell(1);
+            var interestCell = row.insertCell(2);
+            var principalCell = row.insertCell(3);
+            var balanceCell = row.insertCell(4);
+
+            monthCell.innerHTML = table[i].Month;
+            paymentCell.innerHTML = "$" + formatNumber(table[i].Payment);
+            interestCell.innerHTML = "$" + formatNumber(table[i].Interest);
+            principalCell.innerHTML = "$" + formatNumber(table[i].Principal);
+            balanceCell.innerHTML = "$" + formatNumber(table[i].Balance);
+        }
+
+        document.getElementById("loanAmount").oninput = calculate;
+        document.getElementById("interestRate").oninput = calculate;
+        document.getElementById("numMonths").oninput = calculate;
+        document.getElementById("addCapital").oninput = calculate;
+    }
+</script>
