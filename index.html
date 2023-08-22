@@ -11,24 +11,29 @@
 </head>
 <body>
     <h1 class="text-center mt-5">Simulador de crédito Tasa fija</h1>
-    <div class="row" style="height: 500px">
+    <div class="row" style="height: 900px">
         <form class="col-lg-3 col-sm-12">
             <br>
-            <label class="mx-5 mb-2 bold">Monto del préstamo: <input type="text" class="form-control" id="loanAmount" oninput="this.value = formatNumberInput(this.value)"></label>
-            <label class="mx-5 mb-2 bold">Tasa de interés mensual: <input type="text" class="form-control" id="interestRate"></label>
-            <label class="mx-5 mb-2 bold">Número de meses: <input type="text" class="form-control" id="numMonths"></label>
+            <label class="mx-5 mb-2 bold">Monto del préstamo: <input required type="text" class="form-control" id="loanAmount" oninput="this.value = formatNumberInput(this.value)"></label>
+            <label class="mx-5 mb-2 bold">Tasa de interés mensual: <input required type="number" class="form-control" id="interestRate"></label>
+            <label class="mx-5 mb-2 bold">Número de meses: <input required type="number" class="form-control" id="numMonths"></label>
             <label class="mx-5 mb-2 bold">Agregar monto a capital (Opcional): <input type="text" class="form-control" id="addCapital" oninput="this.value = formatNumberInput(this.value)"></label><br><br>
             <input type="button" class="btn btn-success mx-5" value="Calcular" onclick="calculate()">
             <button class="btn btn-danger" onclick="deleteRow()">Limpiar tabla</button>
         </form>
-        <div class="col-lg-8 col-sm-12 mt-4 justify-content-center">
+        <div class="col-lg-9 col-sm-12 mt-4 justify-content-center">
             <table id="table" class="table table-success table-striped">
                 <thead>
                     <tr>
                         <th>Mes</th>
-                        <th>Interés Mensual</th>
-                        <th>Monto a Interés</th>
-                        <th>Monto a Capital</th>
+                        <th>Cuota Mensual</th>
+                        <th>Cuota Monto a Interés</th>
+                        <th>Acumulado Interés</th>
+                        <th>Cuota Monto a Capital</th>
+                        <th>Agregado Monto a Capital</th>
+                        <th>Acumulado Agregado Monto a Capital</th>
+                        <th>Monto a Capital Total (cuota + agregado)</th>
+                        <th>Acumulado Capital Total</th>
                         <th>Saldo Final</th>
                     </tr>
                 </thead>
@@ -45,41 +50,63 @@
     var row = document.getElementsByTagName('tbody')[0];
 
     function deleteRow (row) {
-        row.parentNode.removeChild(row);
+        var interestRateInput = document.getElementById("interestRate");
+        var numMonthsInput = document.getElementById("numMonths");
+        interestRateInput.value = 0; // O el valor que prefieras
+        numMonthsInput.value = 0; // O el valor que prefieras
+        if (row)
+            row.parentNode.removeChild(row);
     };
 
     function removeFormatNumberInput(num = null) {
         return num.replace(/\./g,'');
     }
 
-
-    function amortizationTable(loanAmount, interestRate, numMonths, addCapital = '') {
+    function amortizationTable(loanAmount, interestRate, numMonths, monthlyAddCapital = '') {
+        console.log('ok')
+        console.log(monthlyAddCapital)
         loanAmount = removeFormatNumberInput(loanAmount)
-        addCapital = removeFormatNumberInput(addCapital)
+        monthlyAddCapital = removeFormatNumberInput(monthlyAddCapital)
+        console.log(monthlyAddCapital)
         // Calcular el pago mensual
         var monthlyPayment = loanAmount * interestRate / (1 - Math.pow(1 + interestRate, -numMonths));
     
         // Crear una tabla vacía para almacenar los resultados
         var table = [];
+        var monthlyInterestAccumulated = 0
+        var monthlyAddCapitalAccumulated = 0
+        var monthlyCapitalAccumulated = 0
 
         // Loop a través de cada mes
         for (var i = 1; i <= numMonths; i++) {
             // Calcular el interés mensual
             var monthlyInterest = (loanAmount * interestRate);
-            console.log(addCapital)
-            // Calcular el principal mensual
-            var monthlyPrincipal = (monthlyPayment + (addCapital !== '' ? parseInt(addCapital) : 0)) - monthlyInterest;
-            // Restar el principal mensual del saldo restante del préstamo
-            loanAmount -= monthlyPrincipal;
+            // Calcular el capital mensual
+            var monthlyFeeCapital = monthlyPayment - monthlyInterest;
+            monthlyAddCapital = monthlyAddCapital !== '' ? parseFloat(monthlyAddCapital) : 0
+            var monthlyCapital = (monthlyPayment + monthlyAddCapital) - monthlyInterest;
+            // Restar el capital mensual del saldo restante del préstamo
+            loanAmount -= monthlyCapital;
+            monthlyInterestAccumulated += monthlyInterest
+            monthlyAddCapitalAccumulated += monthlyAddCapital;
+            monthlyCapitalAccumulated += monthlyCapital
     
             // Agregar los resultados al final de la tabla
             table.push({
                 Month: i,
                 Payment: monthlyPayment.toFixed(0),
                 Interest: monthlyInterest.toFixed(0),
-                Principal: monthlyPrincipal.toFixed(0),
+                interestAccumulated: monthlyInterestAccumulated.toFixed(0),
+                feeCapital: monthlyFeeCapital.toFixed(0),
+                addCapital: monthlyAddCapital,
+                addCapitalAccumulated: monthlyAddCapitalAccumulated,
+                Capital: monthlyCapital.toFixed(0),
+                capitalAccumulated: monthlyCapitalAccumulated.toFixed(0),
                 Balance: loanAmount.toFixed(0)
             });
+
+            if (loanAmount < 0)
+                break
         }
     
         // Devolver la tabla
@@ -94,12 +121,17 @@
         num = num.toString().replace(/[^0-9]/g,'');
         var parts = num.toString().split(".");
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
         return parts.join(".");
     }
 
     function calculate() {
-        var tableElem = document.getElementById('table');
-        var row = document.getElementsByTagName('tbody')[0];
+        var rowTable = document.getElementsByTagName('tbody')[0];
+        if (rowTable)
+            alert('clic en Limpiar tabla antes de Calcular')
+
+        // var tableElem = document.getElementById('table');
+        // var row = document.getElementsByTagName('tbody')[0];
         // row.parentNode.removeChild(row);
 
         var loanAmount = document.getElementById("loanAmount").value;
@@ -114,13 +146,23 @@
             var monthCell = row.insertCell(0);
             var paymentCell = row.insertCell(1);
             var interestCell = row.insertCell(2);
-            var principalCell = row.insertCell(3);
-            var balanceCell = row.insertCell(4);
+            var interestAccumulatedCell = row.insertCell(3)
+            var feeCapitalCell = row.insertCell(4)
+            var addCapitalCell = row.insertCell(5)
+            var addCapitalAccumulatedCell = row.insertCell(6)
+            var capitalCell = row.insertCell(7);
+            var capitalAccumulatedCell = row.insertCell(8)
+            var balanceCell = row.insertCell(9);
 
             monthCell.innerHTML = table[i].Month;
             paymentCell.innerHTML = "$" + formatNumber(table[i].Payment);
             interestCell.innerHTML = "$" + formatNumber(table[i].Interest);
-            principalCell.innerHTML = "$" + formatNumber(table[i].Principal);
+            interestAccumulatedCell.innerHTML = "$" + formatNumber(table[i].interestAccumulated);
+            feeCapitalCell.innerHTML = "$" + formatNumber(table[i].feeCapital);
+            addCapitalCell.innerHTML = "$" + formatNumber(table[i].addCapital);
+            addCapitalAccumulatedCell.innerHTML = "$" + formatNumber(table[i].addCapitalAccumulated);
+            capitalCell.innerHTML = "$" + formatNumber(table[i].Capital);
+            capitalAccumulatedCell.innerHTML = "$" + formatNumber(table[i].capitalAccumulated);
             balanceCell.innerHTML = "$" + formatNumber(table[i].Balance);
         }
 
