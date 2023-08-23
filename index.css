@@ -1,0 +1,162 @@
+.custom-card {
+    margin-top: 50px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.card-title {
+    font-size: 24px;
+    margin-bottom: 0;
+    color: #6c757d;
+}
+
+.input-group-prepend span {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    padding: 7px 10px;
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+
+/* Style for input groups */
+.input-group-custom {
+    display: flex;
+    align-items: center;
+    border: none; /* Remove outer border */
+    border-bottom: 1px solid #ccc; /* Add bottom border */
+    border-radius: 0; /* Remove border-radius */
+    overflow: hidden;
+    transition: border-color 0.2s;
+    position: relative;
+}
+
+.input-group-addon {
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-right: 1px solid #ccc;
+}
+
+.input-group-addon,
+.input-group-addon i {
+    color: #28a745;
+}
+
+.form-control-custom {
+    border: none;
+    border-top: 1px solid transparent; /* Hide top border */
+    border-left: 1px solid transparent; /* Hide left border */
+    border-right: 1px solid transparent; /* Hide right border */
+    border-bottom: 1px solid #ccc; /* Default color of bottom border */
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-radius: 0;
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    flex-grow: 1; /* To fill the remaining space */
+    box-shadow: none; /* Remove default Bootstrap shadow */
+}
+
+.form-control-custom:focus,
+.form-control-custom:hover {
+    outline: none; /* Hide default focus outline */
+    border-bottom-color: #28a745; /* Change the color of the bottom border on focus or hover */
+    border-bottom-width: 3px; /* Increase the thickness of the bottom border */
+    box-shadow: 5px 2px 4px rgba(40, 167, 69, 0.4); /* Apply a subtle shadow effect */
+}
+
+/* Style for dropdown button */
+/* .btn-dropdown {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 15px;
+    color: #6c757d;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-dropdown:focus,
+.btn-dropdown:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+} */
+
+/* Style for dropdown menu items */
+/* .dropdown-menu-custom {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 0;
+}
+
+.dropdown-item-custom {
+    padding: 10px 20px;
+    color: #6c757d;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-item-custom:hover {
+    background-color: #f8f9fa;
+    color: #28a745;
+}         */
+
+/* Style for custom buttons */
+.btn-custom {
+    border-radius: 5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-custom:focus {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+/* Style for the table */
+.table-custom {
+    font-size: 14px;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.table-custom th,
+.table-custom td {
+    border: none;
+    padding: 12px;
+    text-align: center;
+}
+
+.table-custom thead {
+    background-color: #f8f9fa;
+    color: #6c757d; /* Color verde para los títulos */
+}
+
+.table-custom tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+    color: #6c757d; /* Color gris para el contenido en filas pares */
+}
+
+.table-custom tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Color de fondo blanco para el contenido en filas impares */
+    color: #6c757d; /* Color gris para el contenido en filas impares */
+}
+
+.table-custom tbody tr:hover {
+    background-color: #e9ecef;
+    color: #6c757d; /* Color gris para el contenido al hacer hover */
+}
