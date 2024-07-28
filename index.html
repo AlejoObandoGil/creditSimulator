@@ -104,6 +104,14 @@
             </div>
         </div>        
     </div>
+    
+    <div id="chatbot-root"></div>
+    <script src="https://chatbot-ai-nextjs-production.up.railway.app/chatbot.bundle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.renderChatbot('chatbot-root', '4cbda66d-2ba5-470e-956e-037946e96307');
+        });
+    </script>
 </body>
 </html>
 
